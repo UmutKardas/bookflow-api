@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookType {
+  FANTASY
+  SCIENCE
+  HISTORY
+}
+
+enum ProviderType {
+  none
+  google
+  apple
+  email
+}
+
+model User {
+  id                String       @id @default(uuid())
+  name              String
+  provider          ProviderType
+  providerId        String?
+  email             String       @unique
+  password          String?
+  profilePictureUrl String?
+  bookCount         Int          @default(0)
+  favoriteBookType  BookType?
+  readingPageCount  Int          @default(0)
+
+  userBooks Book[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Book {
+  id            String    @id @default(uuid())
+  bookName      String
+  authorName    String
+  coverImageUrl String?
+  totalPages    Int
+  startDate     DateTime
+  endDate       DateTime?
+  bookType      BookType
+  rating        Int?
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+}
