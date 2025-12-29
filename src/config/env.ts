@@ -3,6 +3,7 @@ import { z } from "zod";
 const envSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
     PORT: z.coerce.number().default(3000),
+    DATABASE_URL: z.string().min(1, "postgresql://user:password@localhost:5432"),
     JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
     JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required"),
     REDIS_HOST: z.string().min(1, "REDIS_HOST is required"),
@@ -12,10 +13,9 @@ const envSchema = z.object({
     APPLE_CLIENT_ID: z.string().min(1, "APPLE_CLIENT_ID is required"),
 });
 
-let env;
 
 try {
-    env = envSchema.parse(process.env);
+    envSchema.parse(process.env);
 } catch (error) {
     if (error instanceof z.ZodError) {
         console.error("Missing environment variables:", error.issues.flatMap(issue => issue.path));
@@ -25,4 +25,4 @@ try {
     process.exit(1);
 }
 
-export { env };
+export const env = envSchema.parse(process.env);
