@@ -1,28 +1,31 @@
-import { z } from "zod";
+import 'dotenv/config';
+import { z } from 'zod';
 
 const envSchema = z.object({
-    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     PORT: z.coerce.number().default(3000),
-    DATABASE_URL: z.string().min(1, "postgresql://user:password@localhost:5432"),
-    JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
-    JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required"),
-    REDIS_HOST: z.string().min(1, "REDIS_HOST is required"),
+
+    DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+
+    JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
+    JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET is required'),
+
+    REDIS_HOST: z.string().min(1, 'REDIS_HOST is required'),
     REDIS_PORT: z.coerce.number().default(6379),
     REDIS_PASSWORD: z.string().optional(),
-    GOOGLE_CLIENT_ID: z.string().min(1, "GOOGLE_CLIENT_ID is required"),
-    APPLE_CLIENT_ID: z.string().min(1, "APPLE_CLIENT_ID is required"),
+
+    GOOGLE_CLIENT_ID: z.string().min(1, 'GOOGLE_CLIENT_ID is required'),
+    APPLE_CLIENT_ID: z.string().min(1, 'APPLE_CLIENT_ID is required'),
 });
 
+const parsed = envSchema.safeParse(process.env);
 
-try {
-    envSchema.parse(process.env);
-} catch (error) {
-    if (error instanceof z.ZodError) {
-        console.error("Missing environment variables:", error.issues.flatMap(issue => issue.path));
-    } else {
-        console.error(error);
-    }
+if (!parsed.success) {
+    console.error(
+        'Missing environment variables:',
+        parsed.error.issues.map(i => i.path.join('.')),
+    );
     process.exit(1);
 }
 
-export const env = envSchema.parse(process.env);
+export const env = parsed.data;

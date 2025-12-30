@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum BookType {\n  FANTASY\n  SCIENCE\n  HISTORY\n}\n\nenum ProviderType {\n  none\n  google\n  apple\n  email\n}\n\nmodel User {\n  id                String       @id @default(uuid())\n  name              String\n  provider          ProviderType\n  providerId        String?\n  email             String       @unique\n  password          String?\n  profilePictureUrl String?\n  bookCount         Int          @default(0)\n  favoriteBookType  BookType?\n  readingPageCount  Int          @default(0)\n\n  userBooks Book[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([email])\n}\n\nmodel Book {\n  id            String    @id @default(uuid())\n  bookName      String\n  authorName    String\n  coverImageUrl String?\n  totalPages    Int\n  startDate     DateTime\n  endDate       DateTime?\n  bookType      BookType\n  rating        Int?\n\n  user   User?   @relation(fields: [userId], references: [id])\n  userId String?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([id])\n}\n",
+  "inlineSchema": "generator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum BookType {\n  FANTASY\n  SCIENCE\n  HISTORY\n}\n\nenum ProviderType {\n  none\n  google\n  apple\n  email\n}\n\nmodel User {\n  id                String       @id @default(uuid())\n  name              String\n  provider          ProviderType\n  providerId        String?\n  email             String       @unique\n  password          String?\n  profilePictureUrl String?\n  bookCount         Int          @default(0)\n  favoriteBookType  BookType?\n  readingPageCount  Int          @default(0)\n\n  userBooks Book[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([email])\n}\n\nmodel Book {\n  id            String    @id @default(uuid())\n  bookName      String\n  authorName    String\n  coverImageUrl String?\n  totalPages    Int\n  startDate     DateTime\n  endDate       DateTime?\n  bookType      BookType\n  rating        Int?\n\n  user   User?   @relation(fields: [userId], references: [id])\n  userId String?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([id])\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -37,10 +37,10 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.js"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.js")
     return await decodeBase64AsWasm(wasm)
   }
 }
