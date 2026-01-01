@@ -11,20 +11,24 @@ export class UserService {
     constructor(private readonly prismaService: PrismaService) { }
 
     async getUserById(id: string, includeBooks: boolean = false): Promise<UserEntity> {
-        let user = await this.prismaService.user.findUnique({
-            where: {
-                id: id
-            },
-            include: {
-                userBooks: includeBooks
+        try {
+            let user = await this.prismaService.user.findUnique({
+                where: {
+                    id: id
+                },
+                include: {
+                    userBooks: includeBooks
+                }
+            })
+
+            if (!user) {
+                throw new AppException('User not found')
             }
-        })
 
-        if (!user) {
-            throw new AppException('User not found')
+            return UserMapper.toUserEntity(user)
+        } catch (error) {
+            throw error
         }
-
-        return UserMapper.toUserEntity(user)
     }
 
     async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserEntity> {

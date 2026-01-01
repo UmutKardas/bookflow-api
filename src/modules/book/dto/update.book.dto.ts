@@ -2,9 +2,6 @@ import { IsDate, IsEnum, IsNumber, IsOptional, IsString, IsUrl, Max, Min } from 
 import { BookType } from "src/generated/prisma/enums";
 
 export class UpdateBookDto {
-    @IsString()
-    bookId: string;
-
     @IsOptional()
     @IsString()
     bookName?: string;
