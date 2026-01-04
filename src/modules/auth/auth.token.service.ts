@@ -5,14 +5,18 @@ import { RedisService } from "src/redis/redis.service";
 export class AuthTokenService {
     constructor(private readonly redisService: RedisService) { }
 
-    async saveRefreshToken(userId: string, refreshToken: string) {
-        const key = `refresh_token:${userId}`
-        await this.redisService.set(key, refreshToken, "EX", 7 * 24 * 60 * 60)
+    async rotateRefreshToken(userId: string, oldRefreshToken) {
+
     }
 
-    async getRefreshToken(userId: string) {
+    async saveRefreshToken(userId: string, refreshToken: string): Promise<string | null> {
         const key = `refresh_token:${userId}`
-        await this.redisService.get(key)
+        return await this.redisService.set(key, refreshToken, "EX", 7 * 24 * 60 * 60)
+    }
+
+    async getRefreshToken(userId: string): Promise<string | null> {
+        const key = `refresh_token:${userId}`
+        return await this.redisService.get(key)
     }
 
     async deleteRefreshToken(userId: string) {
