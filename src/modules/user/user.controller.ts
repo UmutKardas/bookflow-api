@@ -6,6 +6,7 @@ import { UserService } from "./user.service";
 import { User } from "src/common/decarators/user.decarator";
 import type { UserEntity } from "./entities/user.entity";
 import { UserMapper } from "src/common/mappers/user.mapper";
+import { AppException } from "src/common/exceptions/app.exception";
 @Controller("user")
 export class UserController {
     constructor(private readonly userService: UserService) { }
@@ -19,7 +20,10 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async get(@Param('id') id: string): Promise<UserProfileResponseDto> {
-        const user = await this.userService.getUserById(id)
+        const user = await this.userService.getUniqueUser({ id: id })
+        if (!user) {
+            throw new AppException(`User with id ${id} not found`);
+        }
         return UserMapper.toUserProfileDto(user)
     }
 
