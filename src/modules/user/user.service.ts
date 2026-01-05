@@ -2,11 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UserEntity } from "./entities/user.entity";
 import { AppException } from "src/common/exceptions/app.exception";
-import { BookType, Prisma, ProviderType } from "src/generated/prisma/client";
+import { Prisma } from "src/generated/prisma/client";
 import { UserMapper } from "src/common/mappers/user.mapper";
 import { UserUpdateDto } from "./dto/user.update.dto";
-import { AuthRegisterDto } from "../auth/dto/auth.register.dto";
 import { hash } from "src/common/crypto/bcrypt.utils";
+import { CreateUserData } from "./contracts/create-user.data";
 
 @Injectable()
 export class UserService {
@@ -27,7 +27,7 @@ export class UserService {
         }
     }
 
-    async create(data: AuthRegisterDto): Promise<UserEntity> {
+    async create(data: CreateUserData): Promise<UserEntity> {
         try {
             const user = await this.prismaService.user.create({
                 data: {

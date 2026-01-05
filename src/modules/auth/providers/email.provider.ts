@@ -8,14 +8,15 @@ import { AuthTokenService } from "../auth.token.service";
 import { UserService } from "src/modules/user/user.service";
 import { UserEntity } from "src/modules/user/entities/user.entity";
 import { compare } from "src/common/crypto/bcrypt.utils";
+import { UserMapper } from "src/common/mappers/user.mapper";
 
 @Injectable()
 export class EmailProvider extends BaseAuthProvider {
     constructor(
         protected readonly authTokenService: AuthTokenService,
-        private readonly userService: UserService
+        protected readonly userService: UserService
     ) {
-        super(authTokenService);
+        super(authTokenService, userService);
     }
 
     async validateRegister(data: AuthRegisterDto): Promise<AuthResponseDto> {
@@ -37,7 +38,9 @@ export class EmailProvider extends BaseAuthProvider {
             throw new AppException("Email already in use", "", HttpStatus.CONFLICT)
         }
 
-        const user: UserEntity = await this.userService.create(data);
+        const createInput = UserMapper.registerDtoToCreateInput(data);
+
+        const user: UserEntity = await this.userService.create(createInput);
         return this.generateAuthResponse(user);
     }
 

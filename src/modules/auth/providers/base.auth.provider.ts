@@ -7,9 +7,14 @@ import { generateRefreshToken, generateToken } from "src/common/jwt/jwt.utils";
 import { AuthTokenService } from "../auth.token.service";
 import { UserProfileResponseDto } from "src/modules/user/dto/user.profile.response.dto";
 import { UserMapper } from "src/common/mappers/user.mapper";
+import { CreateUserData } from "src/modules/user/contracts/create-user.data";
+import { UserService } from "src/modules/user/user.service";
 
 export abstract class BaseAuthProvider implements AuthProvider {
-    constructor(protected readonly authTokenService: AuthTokenService) { }
+    constructor(
+        protected readonly authTokenService: AuthTokenService,
+        protected readonly userService: UserService
+    ) { }
 
     abstract validateRegister(data: AuthRegisterDto): Promise<AuthResponseDto>
     abstract validateLogin(data: AuthLoginDto): Promise<AuthResponseDto>
@@ -27,4 +32,9 @@ export abstract class BaseAuthProvider implements AuthProvider {
         }
     }
 
+    protected async createOrRetrieveUser(createUserData: CreateUserData): Promise<AuthResponseDto> {
+        const existingUser = await this.userService.getUniqueUser({ email: createUserData.email });
+        const user = existingUser ? existingUser : await this.userService.create(createUserData);
+        return this.generateAuthResponse(user);
+    }
 }

@@ -2,6 +2,9 @@ import { BookType, ProviderType } from "src/generated/prisma/client";
 import { UserProfileResponseDto } from "src/modules/user/dto/user.profile.response.dto";
 import { UserEntity } from "src/modules/user/entities/user.entity";
 import { BookMapper } from "./book.mapper";
+import { AuthRegisterDto } from "src/modules/auth/dto/auth.register.dto";
+import { CreateUserData } from "src/modules/user/contracts/create-user.data";
+import { AuthLoginDto } from "src/modules/auth/dto/auth.login.dto";
 
 export class UserMapper {
     static toUserEntity(user: any): UserEntity {
@@ -31,6 +34,28 @@ export class UserMapper {
             favoriteBookType: user.favoriteBookType ?? undefined,
             readingPageCount: user.readingPageCount,
             books: user.userBooks?.map(x => BookMapper.toBookResponseDto(x)) ?? undefined
+        }
+    }
+
+    static registerDtoToCreateInput(data: AuthRegisterDto, overrides: Partial<CreateUserData> = {}): CreateUserData {
+        return {
+            email: data.email,
+            name: data.name,
+            password: data.password ?? null,
+            provider: data.provider as ProviderType,
+            providerId: data.providerId ?? null,
+            ...overrides
+        }
+    }
+
+    static loginDtoToCreateInput(data: AuthLoginDto, overrides: Partial<CreateUserData> = {}): CreateUserData {
+        return {
+            email: data.email ?? "",
+            name: "Anonymous",
+            password: data.password,
+            provider: data.provider as ProviderType,
+            providerId: data.providerId,
+            ...overrides
         }
     }
 }
