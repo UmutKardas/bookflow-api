@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CreateBookDto } from "./dto/create.book.dto";
 import { BookEntity } from "./entities/book.entity";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "src/infra/prisma/prisma.service";
 import { AppException } from "src/common/exceptions/app.exception";
 import { BookMapper } from "src/common/mappers/book.mapper";
 import { UpdateBookDto } from "./dto/update.book.dto";

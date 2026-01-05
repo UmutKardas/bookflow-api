@@ -1,0 +1,1 @@
+export const SKIP_JWT_GUARD = "skip-jwt-guard";

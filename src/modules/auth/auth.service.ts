@@ -8,7 +8,6 @@ import { AuthProvider } from "./contracts/auth.provider.interface";
 import { ProviderType } from "src/generated/prisma/enums";
 import { AuthRegisterDto } from "./dto/auth.register.dto";
 import { AuthResponseDto } from "./dto/auth.response.dto";
-import { UserService } from "../user/user.service";
 import { AuthLoginDto } from "./dto/auth.login.dto";
 
 @Injectable()
@@ -16,11 +15,10 @@ export class AuthService {
     private providers: Partial<Record<ProviderType, AuthProvider>> = {}
 
     constructor(
-        private readonly userService: UserService,
         private readonly authTokenService: AuthTokenService,
-        private readonly emailProvider: EmailProvider,
-        private readonly googleProvider: GoogleProvider,
-        private readonly appleProvider: AppleProvider
+        emailProvider: EmailProvider,
+        googleProvider: GoogleProvider,
+        appleProvider: AppleProvider
     ) {
         this.providers = {
             "email": emailProvider,

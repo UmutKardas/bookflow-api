@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AppException } from "src/common/exceptions/app.exception";
 import { generateRefreshToken, generateToken } from "src/common/jwt/jwt.utils";
-import { RedisService } from "src/redis/redis.service";
+import { RedisService } from "src/infra/redis/redis.service";
 import { AuthRefreshResponseDto } from "./dto/auth.refresh.response.dto";
 
 @Injectable()
