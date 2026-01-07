@@ -16,6 +16,11 @@ const envSchema = z.object({
 
     GOOGLE_CLIENT_ID: z.string().min(1, 'GOOGLE_CLIENT_ID is required'),
     APPLE_CLIENT_ID: z.string().min(1, 'APPLE_CLIENT_ID is required'),
+
+    ELASTICSEARCH_NODE: z.string().min(1, 'ELASTICSEARCH_NODE is required'),
+    ELASTICSEARCH_USERNAME: z.string().optional(),
+    ELASTICSEARCH_PASSWORD: z.string().optional(),
+
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -1,0 +1,1 @@
+export const BOOK_ELASTICSEARCH_INDEX: string = "book"

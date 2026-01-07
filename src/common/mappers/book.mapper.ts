@@ -1,4 +1,5 @@
 import { BookResponseDto } from "src/modules/book/dto/book.response.dto";
+import { SearchBookResponseDto } from "src/modules/book/dto/search.book.response.dto";
 import { BookEntity } from "src/modules/book/entities/book.entity";
 
 export class BookMapper {

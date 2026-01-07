@@ -5,10 +5,14 @@ import { PrismaService } from "src/infra/prisma/prisma.service";
 import { AppException } from "src/common/exceptions/app.exception";
 import { BookMapper } from "src/common/mappers/book.mapper";
 import { UpdateBookDto } from "./dto/update.book.dto";
+import { BookElasticService } from "./book-elastic.service";
 
 @Injectable()
 export class BookService {
-    constructor(private readonly prismaService: PrismaService) { }
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly bookElasticService: BookElasticService
+    ) { }
 
     async getBookById(id: string): Promise<BookEntity> {
         try {
@@ -42,9 +46,14 @@ export class BookService {
                     rating: bookData.rating || null,
                     userId: userId,
                 }
-            })
+            });
 
-            return BookMapper.toBookEntity(createdBook)
+            const bookEntity = BookMapper.toBookEntity(createdBook);
+
+            await this.bookElasticService.indexBook(bookEntity);
+
+            return bookEntity;
+
         } catch (error) {
             throw error
         }
@@ -69,7 +78,12 @@ export class BookService {
                 data: bookData,
             });
 
-            return BookMapper.toBookEntity(updatedBook);
+            const bookEntity = BookMapper.toBookEntity(updatedBook);
+
+            await this.bookElasticService.updateBook(bookEntity);
+
+            return bookEntity;
+
         } catch (error) {
             throw error
         }
@@ -94,6 +108,8 @@ export class BookService {
                     id
                 }
             })
+
+            await this.bookElasticService.deleteBook(id);
 
             return true;
 
